@@ -13,15 +13,15 @@ yf.pdr_override()
 #print(data)
 
 
-stock_string = "MRO"
-#stock_string = "JCP"
+#stock_string = "MRO"
+stock_string = "JCP"
 
 #stock = yf.Ticker(stock_string)
 #print(stock)
 #print(stock.history(period="1week"))
 
 
-data = pdr.get_data_yahoo(stock_string, start="2020-05-01", end="2020-05-14")
+data = pdr.get_data_yahoo(stock_string, start="2020-05-01", end="2020-05-15")
 
 print(data)
 
@@ -35,6 +35,7 @@ pl_plot(22.50, .85,type='call')
 pl_plot(50, 1.45,type='call',order='sell')
 pl_plot(139, 2.3,type='put')
 pl_plot(1, .8,type='put',order='sell')
+#pl_plot(65, 1.2,type='put',order='sell')
 #pl_plot(25, 5.,type='put',order='sell')
 
 
