@@ -1,5 +1,6 @@
 import datetime
 import matplotlib.pyplot as plt
+import numpy as np
 
 def check_trading_day(date):
 
@@ -26,7 +27,7 @@ def check_weekday(date):
         return True
 
 
-def pl_plot(strike, mark,type='call',order='buy'):
+def pl_plot(strike, premium,type='call',order='buy'):
 
     fig = plt.figure(figsize=(8, 5))
     #plt.gcf().subplots_adjust(bottom=0.15, left=0.15)
@@ -34,87 +35,78 @@ def pl_plot(strike, mark,type='call',order='buy'):
     prange = 10
 
     strike = float(strike)
-    mark = float(mark)
+    premium = float(premium)
+
+    # Define flat part of P&L curve
+    flat_curve_y = np.array([-premium, -premium])
 
     if type=='call':
 
         ptype = "Call"
 
+        flat_curve_x = np.array([0, strike])
+
+        xmax = (strike + premium) + premium
+        if strike - premium > 0:
+            xmin = strike - premium
+        else:
+            xmin = 0
+
+        xrange = [xmin,xmax]
+
+        slant_curve_x = np.array([strike, xmax])
+        slant_curve_y = np.array([-premium, premium])
+
         if order=='buy':
 
             porder = "Buy"
 
-            flat_curve_y = [-mark,-mark]
-            flat_curve_x = [0,strike]
-
-            #slant_curve_x0 = [strike,strike+mark]
-            #slant_curve_y0 = [-mark,0]
-
             # Note slope = 1, intercept = -(strike+mark)
-
-            xval = mark + (strike+mark)
-
-            slant_curve_x = [strike,xval]
-            slant_curve_y = [-mark,mark]
-
-            xrange = [(strike+mark)-(xval-strike+mark),xval]
 
         if order=='sell':
 
             porder = "Sell"
 
-            flat_curve_y = [mark,mark]
-            flat_curve_x = [0,strike]
+            # Flat part of curve now greater than 0
+            flat_curve_y = -flat_curve_y
 
             # Note slope = -1, intercept = strike+mark
 
-            xval = mark + strike+mark
-
-            slant_curve_x = [strike,xval]
-            slant_curve_y = [mark,-mark]
-
-            xrange = [(strike+mark)-(xval-strike+mark),xval]
+            slant_curve_y = -slant_curve_y
 
     if type=='put':
 
         ptype = "Put"
 
+        flat_curve_x = np.array([strike, strike * 1000])
+
+        xmax = strike + premium
+        if (strike - premium) - premium > 0:
+            xmin = (strike - premium) - premium
+        else:
+            xmin = 0
+
+
+        xrange = np.array([xmin,xmax])
+
+        slant_curve_x = np.array([xmin, strike])
+        slant_curve_y = np.array([premium, -premium])
+
         if order=='buy':
 
             porder = "Buy"
 
-            flat_curve_y = [-mark,-mark]
-            flat_curve_x = [strike,strike*1000]
-
-            #slant_curve_x0 = [strike-mark,strike]
-            #slant_curve_y0 = [0,-mark]
-
             # Note slope = -1, intercept = strike-mark
-
-            xval = (strike-mark) - mark
-
-            slant_curve_x = [xval,strike]
-            slant_curve_y = [mark,-mark]
-
-            xrange = [xval,(strike+mark)-(xval-strike+mark)]
 
         if order=='sell':
 
             porder = "Sell"
 
-            flat_curve_y = [mark,mark]
-            flat_curve_x = [strike,strike*1000]
+            flat_curve_y = -flat_curve_y
 
             # Note slope = 1, intercept = -(strike-mark)
 
-            xval = (strike - mark) - mark
-
-            slant_curve_x = [0,strike]
-            slant_curve_y = [-(strike-mark),mark]
-
-            xrange = [xval,(strike+mark)-(xval-strike+mark)]
-
-
+            slant_curve_y = -slant_curve_y
 
 
 
