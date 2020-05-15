@@ -68,6 +68,13 @@ def pl_plot(strike, mark,type='call',order='buy'):
 
             # Note slope = -1, intercept = strike+mark
 
+            xval = mark + strike+mark
+
+            slant_curve_x = [strike,xval]
+            slant_curve_y = [mark,-mark]
+
+            xrange = [(strike+mark)-(xval-strike+mark),xval]
+
     if type=='put' and order=='buy':
 
         ptype = "Put"
