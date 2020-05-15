@@ -34,5 +34,7 @@ print(ch)
 pl_plot(22.50, .85,type='call')
 pl_plot(50, 1.45,type='call',order='sell')
 pl_plot(139, 2.3,type='put')
+pl_plot(1, .8,type='put',order='sell')
+#pl_plot(25, 5.,type='put',order='sell')
 
 

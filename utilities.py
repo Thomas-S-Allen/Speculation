@@ -75,28 +75,46 @@ def pl_plot(strike, mark,type='call',order='buy'):
 
             xrange = [(strike+mark)-(xval-strike+mark),xval]
 
-    if type=='put' and order=='buy':
+    if type=='put':
 
         ptype = "Put"
-        porder = "Buy"
 
-        flat_curve_y = [-mark,-mark]
-        flat_curve_x = [strike,strike*1000]
+        if order=='buy':
 
-        #slant_curve_x0 = [strike-mark,strike]
-        #slant_curve_y0 = [0,-mark]
+            porder = "Buy"
 
-        # Note slope = -1, intercept = strike-mark
+            flat_curve_y = [-mark,-mark]
+            flat_curve_x = [strike,strike*1000]
 
-        xval = (strike-mark) - mark
+            #slant_curve_x0 = [strike-mark,strike]
+            #slant_curve_y0 = [0,-mark]
 
-        slant_curve_x = [xval,strike]
-        slant_curve_y = [mark,-mark]
+            # Note slope = -1, intercept = strike-mark
 
-        print(slant_curve_x)
-        print(slant_curve_y)
+            xval = (strike-mark) - mark
 
-        xrange = [xval,(strike+mark)-(xval-strike+mark)]
+            slant_curve_x = [xval,strike]
+            slant_curve_y = [mark,-mark]
+
+            xrange = [xval,(strike+mark)-(xval-strike+mark)]
+
+        if order=='sell':
+
+            porder = "Sell"
+
+            flat_curve_y = [mark,mark]
+            flat_curve_x = [strike,strike*1000]
+
+            # Note slope = 1, intercept = -(strike-mark)
+
+            xval = (strike - mark) - mark
+
+            slant_curve_x = [0,strike]
+            slant_curve_y = [-(strike-mark),mark]
+
+            xrange = [xval,(strike+mark)-(xval-strike+mark)]
+
+
 
 
 
