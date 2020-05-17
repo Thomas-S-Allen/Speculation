@@ -129,6 +129,8 @@ def pl_plot_vertical(strike,\
     premium = {side[0]:float(premium[0]),side[1]:premium[1]}
 
     width = abs(strike['buy'] - strike['sell'])
+    net = abs(premium['sell'] - premium['buy'])
+
 
     if type == 'call':
 
@@ -138,9 +140,10 @@ def pl_plot_vertical(strike,\
             print('Bear Call')
             print('Credit Spread')
 
-            reward = premium['sell'] - premium['buy']
+            #reward = premium['sell'] - premium['buy']
+            reward = net
 
-            risk = width - reward
+            risk = -(width - net)
 
             print('Risk Reward')
             print(risk)
@@ -165,9 +168,10 @@ def pl_plot_vertical(strike,\
             print('Bull Call')
             print('Debit Spread')
 
-            risk = premium['buy'] - premium['sell']
+            #risk = premium['buy'] - premium['sell']
+            risk = -net
 
-            reward = width - risk
+            reward = width - net
 
             print('Risk Reward')
             print(risk)
@@ -192,9 +196,10 @@ def pl_plot_vertical(strike,\
             print('Bear Put')
             print('Debit Spread')
 
-            risk = premium['buy'] - premium['sell']
+            #risk = premium['buy'] - premium['sell']
+            risk = -net
 
-            reward = width - risk
+            reward = width - net
 
             print('Risk Reward')
             print(risk)
@@ -217,8 +222,9 @@ def pl_plot_vertical(strike,\
             print('Bull Put')
             print('Credit Spread')
 
-            reward = premium['sell'] - premium['buy']
-            risk = reward - width
+            #reward = premium['sell'] - premium['buy']
+            reward = net
+            risk = -(reward - net)
 
             print('Risk Reward')
             print(risk)

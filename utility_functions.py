@@ -22,6 +22,8 @@ def parse_naked_option_string(string):
 
     if len(string_list) == 9:
 
+        print('Parsing input string')
+
         side = str(string_list[0])
         multiplier = int(string_list[1])
         stock = str(string_list[2])
@@ -31,6 +33,8 @@ def parse_naked_option_string(string):
         premium = float(string_list[8])
 
     if len(string_list) == 10:
+
+        print('Parsing input string')
 
         side = str(string_list[0])
         multiplier = int(string_list[1])
@@ -42,6 +46,7 @@ def parse_naked_option_string(string):
         premium = float(string_list[9])
 
     print("side")
+    #import pdb;pdb.set_trace()
     print(side)
     if side[0].lower() == 'b':
         side = 'buy'
