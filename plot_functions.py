@@ -128,6 +128,7 @@ def pl_plot_vertical(strike,\
     strike = {side[0]:float(strike[0]), side[1]:float(strike[1])}
     premium = {side[0]:float(premium[0]),side[1]:premium[1]}
 
+    # Common
     width = abs(strike['buy'] - strike['sell'])
     net = abs(premium['sell'] - premium['buy'])
 
