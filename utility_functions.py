@@ -2,7 +2,16 @@ import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 
-def parse_option_string(string):
+def check_order_class(order):
+
+    if "-" in order or "," in order:
+        return "vertical"
+    else:
+        return "naked"
+
+
+
+def parse_naked_option_string(string):
 
     print(string)
 
@@ -40,6 +49,38 @@ def parse_option_string(string):
         side = 'sell'
 
     return side, multiplier, stock, expiration, strike, type, premium
+
+def parse_verical_option_string(order):
+
+    order_list = order.split(',')
+
+    print(order_list)
+
+    side = []
+    multiplier = []
+    stock = []
+    expiration = []
+    strike = []
+    type = []
+    premium = []
+
+    for element in order_list:
+        tmp_side, tmp_multiplier, tmp_stock,\
+        tmp_expiration, tmp_strike, tmp_type, \
+        tmp_premium = \
+            parse_naked_option_string(element)
+
+        side.append(tmp_side)
+        multiplier.append(tmp_multiplier)
+        stock.append(tmp_stock)
+        expiration.append(tmp_expiration)
+        strike.append(tmp_strike)
+        type.append(tmp_type)
+        premium.append(tmp_premium)
+
+    return side, multiplier, stock, expiration, strike, type, premium
+
+
 
 
 def check_trading_day(date):

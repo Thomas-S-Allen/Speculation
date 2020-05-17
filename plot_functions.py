@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def pl_plot(strike,\
+def pl_plot_naked(strike,\
             premium,\
             type='call',\
             side='buy',\
@@ -15,8 +15,6 @@ def pl_plot(strike,\
         print("Need axis object")
 
     #plt.gcf().subplots_adjust(bottom=0.15, left=0.15)
-
-    prange = 10
 
     strike = float(strike)
     premium_y = float(premium) * float(multiplier)
@@ -99,20 +97,162 @@ def pl_plot(strike,\
             slant_curve_y = -slant_curve_y
 
 
-    #fig = plt.figure(figsize=(8, 5))
-    #ax = fig.add_subplot(1, 1, 1)
-
     axis.plot(flat_curve_x,flat_curve_y,'r')
     axis.plot(slant_curve_x,slant_curve_y,'r')
     axis.plot(xrange,[0,0],'k--')
 
-    #ax.set_xlim(xrange)
+    axis.set_xlim(xrange)
 
-    #ax.plt.title("{} {}".format(ptype,porder))
-    #ax.plt.ylabel("Profit and Loss")
-    #ax.plt.xlabel("Stock Price")
+    #plt.show()
+
+    return axis
+
+
+
+def pl_plot_vertical(strike,\
+            premium,\
+            type='call',\
+            side='buy',\
+            multiplier=1,\
+            axis=None):
+
+    try:
+        axis != None
+    except:
+        print("Need axis object")
+
+    #plt.gcf().subplots_adjust(bottom=0.15, left=0.15)
+
+    type = type[0]
+
+    strike = {side[0]:float(strike[0]), side[1]:float(strike[1])}
+    premium = {side[0]:float(premium[0]),side[1]:premium[1]}
+
+    width = abs(strike['buy'] - strike['sell'])
+
+    if type == 'call':
+
+        # Bear Call Spread (Credit Spread)
+        if strike['buy'] > strike['sell']:
+
+            print('Bear Call')
+            print('Credit Spread')
+
+            reward = premium['sell'] - premium['buy']
+
+            risk = width - reward
+
+            print('Risk Reward')
+            print(risk)
+            print(reward)
+
+            xrange = [strike['sell']-width,strike['buy']+width]
+
+            x1 = np.array([0,strike['sell']])
+            y1 = np.array([reward,reward])
+
+            x2 = np.array([strike['sell'],strike['buy']])
+            y2 = [reward,risk]
+
+            x3 = np.array([strike['buy'],strike['buy']*1000])
+            y3 = np.array([risk,risk])
+
+
+
+        #Bull Call Spread (Debit Spread)
+        if strike['buy'] < strike['sell']:
+
+            print('Bull Call')
+            print('Debit Spread')
+
+            risk = premium['buy'] - premium['sell']
+
+            reward = width - risk
+
+            print('Risk Reward')
+            print(risk)
+            print(reward)
+
+            xrange = [strike['buy']-width,strike['sell']+width]
+
+            x1 = np.array([0, strike['buy']])
+            y1 = np.array([risk, risk])
+
+            x2 = np.array([strike['buy'], strike['sell']])
+            y2 = [risk, reward]
+
+            x3 = np.array([strike['sell'], strike['sell'] * 1000])
+            y3 = np.array([reward, reward])
+
+    if type == 'put':
+
+        # Bear Put Spread (Debit Spread)
+        if strike['buy'] > strike['sell']:
+
+            print('Bear Put')
+            print('Debit Spread')
+
+            risk = premium['buy'] - premium['sell']
+
+            reward = width - risk
+
+            print('Risk Reward')
+            print(risk)
+            print(reward)
+
+            xrange = [strike['sell']-width,strike['buy']+width]
+
+            x1 = np.array([0,strike['sell']])
+            y1 = np.array([reward,reward])
+
+            x2 = np.array([strike['sell'],strike['buy']])
+            y2 = [reward,risk]
+
+            x3 = np.array([strike['buy'],strike['buy']*1000])
+            y3 = np.array([risk,risk])
+
+        # Bull Put Spread (Credit Spread)
+        if strike['buy'] < strike['sell']:
+
+            print('Bull Put')
+            print('Credit Spread')
+
+            reward = premium['sell'] - premium['buy']
+            risk = reward - width
+
+            print('Risk Reward')
+            print(risk)
+            print(reward)
+
+            xrange = [strike['buy']-width,strike['sell']+width]
+
+            x1 = np.array([0,strike['buy']])
+            y1 = np.array([risk,risk])
+
+            x2 = np.array([strike['buy'],strike['sell']])
+            y2 = [risk,reward]
+
+            x3 = np.array([strike['sell'],strike['sell']*1000])
+            y3 = np.array([reward,reward])
+
+
+    # Define flat part of P&L curve
+    #flat_curve_y = np.array([-premium_y, -premium_y])
+
+    if xrange[0] < 0:
+        xrange = [0, xrange[1]]
+
+    axis.plot(x1, y1,'r')
+    axis.plot(x2, y2,'r')
+    axis.plot(x3, y3,'r')
+    #axis.plot(slant_curve_x,slant_curve_y,'r')
+    axis.plot(xrange,[0,0],'k--')
+
+    axis.set_xlim(xrange)
+
+
 
 
     #plt.show()
 
-    return axis, xrange
+    return axis
