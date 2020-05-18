@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import utility_functions as uf
+import mcmc_functions as mcmc
 
 
 def pl_plot_naked(strike,\
@@ -25,6 +27,8 @@ def pl_plot_naked(strike,\
     if type=='call':
 
         ptype = "Call"
+
+        break_even = strike + premium
 
         flat_curve_x = np.array([0, strike])
 
@@ -63,6 +67,8 @@ def pl_plot_naked(strike,\
 
         ptype = "Put"
 
+        break_even = strike - premium
+
         flat_curve_x = np.array([strike, strike * 1000])
 
         xmax = strike + premium
@@ -96,16 +102,16 @@ def pl_plot_naked(strike,\
 
             slant_curve_y = -slant_curve_y
 
-
+    zero_range = [0,10**6]
     axis.plot(flat_curve_x,flat_curve_y,'r')
     axis.plot(slant_curve_x,slant_curve_y,'r')
-    axis.plot(xrange,[0,0],'k--')
+    axis.plot(zero_range,[0,0],'k--')
 
     axis.set_xlim(xrange)
 
     #plt.show()
 
-    return axis
+    return axis,xrange, break_even
 
 
 
@@ -146,6 +152,8 @@ def pl_plot_vertical(strike,\
 
             risk = -(width - net)
 
+            break_even = strike['sell'] + premium['sell']
+
             print('Risk Reward')
             print(risk)
             print(reward)
@@ -173,6 +181,8 @@ def pl_plot_vertical(strike,\
             risk = -net
 
             reward = width - net
+
+            break_even = strike['buy'] - premium['buy']
 
             print('Risk Reward')
             print(risk)
@@ -202,6 +212,8 @@ def pl_plot_vertical(strike,\
 
             reward = width - net
 
+            break_even = strike['buy'] - premium['buy']
+
             print('Risk Reward')
             print(risk)
             print(reward)
@@ -227,6 +239,8 @@ def pl_plot_vertical(strike,\
             reward = net
             risk = -(reward - net)
 
+            break_even = strike['sell'] + premium['sell']
+
             print('Risk Reward')
             print(risk)
             print(reward)
@@ -249,11 +263,13 @@ def pl_plot_vertical(strike,\
     if xrange[0] < 0:
         xrange = [0, xrange[1]]
 
+    zero_range = [0,10**6]
+
     axis.plot(x1, y1,'r')
     axis.plot(x2, y2,'r')
     axis.plot(x3, y3,'r')
     #axis.plot(slant_curve_x,slant_curve_y,'r')
-    axis.plot(xrange,[0,0],'k--')
+    axis.plot(zero_range,[0,0],'k--')
 
     axis.set_xlim(xrange)
 
@@ -262,4 +278,21 @@ def pl_plot_vertical(strike,\
 
     #plt.show()
 
+    return axis, xrange, break_even
+
+
+def plot_price_mcmc_histogram(prices,axis=None):
+
+    try:
+        axis != None
+    except:
+        print("Need axis object")
+
+    axis = axis.twinx()
+
+    axis.hist(prices,bins=30,density=True,alpha=0.3)
+
     return axis
+
+
+

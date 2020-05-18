@@ -1,6 +1,47 @@
 import datetime
-import matplotlib.pyplot as plt
+import yfinance as yf
+from pandas_datareader import data as pdr
+import statistics
+import pandas as pd
+pd.options.mode.chained_assignment = None
 import numpy as np
+
+yf.pdr_override()
+
+def calculate_daily_diff(close):
+
+    diff = []
+    for index, price in enumerate(close):
+
+        if index==0:
+            diff.append(0)
+        else:
+            diff.append(close[index]-close[index-1])
+
+    return diff
+
+
+def get_stock_historical_data(stock,start='2000-01-01',end='today'):
+
+    if end=='today':
+        end = datetime.date.today()
+
+    #print(end)
+    df = pdr.get_data_yahoo(stock, start=start,end=end)
+
+    return df
+
+def get_stock_stdev(df,period=10):
+
+    df = df.tail(period+1)
+
+    df['Difference'] = calculate_daily_diff(df['Close'])
+
+    df = df.tail(period)
+
+    print(df)
+    return statistics.stdev(df['Difference'])
+
 
 def check_order_class(order):
 
