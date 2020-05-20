@@ -1,8 +1,10 @@
-import plot_functions as pf
+import functions.plotting.plot_functions as pf
 import matplotlib.pyplot as plt
-import utility_functions as uf
-import mcmc_functions as mcmc
+import functions.simulation.mcmc_functions as mcmc
+import functions.utility.utility_functions as uf
+import functions.utility.date_time_functions as dt
 import argparse
+import datetime
 
 
 
@@ -71,8 +73,9 @@ def main():
                           multiplier=multiplier, \
                           axis=ax)
 
-    ax.set_ylabel("Profit and Loss")
+    ax.set_ylabel("Profit and Loss per Share")
 
+    # MCMC Simulation
     if args_dict['mcmc'] == 'True':
 
         df = uf.get_stock_historical_data(stock)
@@ -83,9 +86,21 @@ def main():
 
         print(stdev)
 
-        price_path = mcmc.stock_random_walk(df,stdev,10)
+        print('Expiration')
+        if len(expiration) > 1:
+            expiration = expiration[0]
+        print(expiration)
+
+        start = datetime.date.today().isoformat()
+        end = dt.input_to_iso(expiration)
+        n_days = dt.get_number_trading_days(start, end)
+        #import pdb;pdb.set_trace()
+        print('Number of Trading Days:')
+        print(n_days)
+
+        #price_path = mcmc.stock_random_walk(df,stdev,n_days)
         #print(price_path)
-        prices = mcmc.many_random_walks(df,stdev,10)
+        prices = mcmc.many_random_walks(df,stdev,n_days)
         print(prices[-10:-1])
 
         prange = [min(prices),max(prices)]
