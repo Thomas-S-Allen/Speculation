@@ -1,8 +1,10 @@
-import functions.plotting.plot_functions as pf
+import functions.plot_functions as pf
 import matplotlib.pyplot as plt
-import functions.simulation.mcmc_functions as mcmc
-import functions.utility.utility_functions as uf
-import functions.utility.date_time_functions as dt
+import functions.mcmc_functions as mcmc
+import functions.utility_functions as uf
+import functions.date_time_functions as dtf
+import functions.options_functions as of
+import numpy as np
 import argparse
 import datetime
 
@@ -34,10 +36,6 @@ def main():
     print(order_class)
 
 
-    fig = plt.figure(figsize=(8, 5))
-    fig.suptitle(order)
-    ax = fig.add_subplot(1, 1, 1)
-
     if order_class == "naked":
         side, multiplier, stock, expiration, strike, type, premium = \
             uf.parse_naked_option_string(order)
@@ -50,12 +48,17 @@ def main():
         print(type)
         print(premium)
 
-        ax,orange,break_even = pf.pl_plot_naked(strike,\
+        return_function,break_even = of.naked_option(strike,\
                                 premium,\
                                 type=type,\
                                 side=side,\
-                                multiplier=multiplier,\
-                                axis=ax)
+                                multiplier=multiplier)
+
+        option_range = [break_even - 2*float(premium),\
+                        break_even + 2*float(premium)]
+
+        return_range = [-premium - 1, premium+1]
+
 
     if order_class=="vertical":
 
@@ -66,13 +69,37 @@ def main():
 
         print(side)
 
-        ax,orange,break_even = pf.pl_plot_vertical(strike, \
+        return_function,break_even = of.vertical_spread(strike, \
                           premium, \
                           type=type, \
                           side=side, \
-                          multiplier=multiplier, \
-                          axis=ax)
+                          multiplier=multiplier)
 
+        width = abs(strike[0] - strike[1])
+        option_range = [break_even - 2*width,\
+                        break_even + 2*width]
+
+        max_premium = max(premium[0],premium[1])
+        return_range = (-max_premium - 1, max_premium + 1)
+
+
+    if min(option_range) < 0:
+        option_range[0] = 0
+
+    xvals = np.linspace(0,break_even*10,break_even*100)
+
+    yvals = []
+    for val in xvals:
+        yvals.append(return_function(val))
+
+
+    fig = plt.figure(figsize=(8, 5))
+    fig.suptitle(order)
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.plot(xvals,yvals, 'r')
+    ax.set_xlim(option_range)
+    ax.set_ylim(return_range)
     ax.set_ylabel("Profit and Loss per Share")
 
     # MCMC Simulation
@@ -86,14 +113,15 @@ def main():
 
         print(stdev)
 
+
         print('Expiration')
-        if len(expiration) > 1:
+        if isinstance(expiration, str) == False:
             expiration = expiration[0]
         print(expiration)
 
         start = datetime.date.today().isoformat()
-        end = dt.input_to_iso(expiration)
-        n_days = dt.get_number_trading_days(start, end)
+        end = dtf.input_to_iso(expiration)
+        n_days = dtf.get_number_trading_days(start, end)
         #import pdb;pdb.set_trace()
         print('Number of Trading Days:')
         print(n_days)
@@ -103,10 +131,13 @@ def main():
         prices = mcmc.many_random_walks(df,stdev,n_days)
         print(prices[-10:-1])
 
-        prange = [min(prices),max(prices)]
+        mcmc_range = [min(prices),max(prices)]
 
-        prange = [min([min(prange),min(orange)]),\
-                  max([max(prange),max(orange)])]
+        if min(mcmc_range) < 0:
+            mcmc_range = [0,max(prices)]
+
+        mcmc_range = [min([min(mcmc_range),min(option_range)]),\
+                  max([max(mcmc_range),max(option_range)])]
 
         ax=pf.plot_price_mcmc_histogram(prices,axis=ax)
 
@@ -122,9 +153,9 @@ def main():
         ax.set_title("{}% below Break Even, {}% above Break Even".\
             format(prob_lt, prob_gt))
 
+        ax.set_xlim(mcmc_range)
 
 
-    ax.set_xlim(prange)
     #ax.set_title(order)
     #ax.set_title("{} {} {} of {}".format(multiplier,type,side,stock))
     #ax.title("{} {}".format(type, side))
