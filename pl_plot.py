@@ -9,14 +9,13 @@ import argparse
 import datetime
 
 
-
-
-
 def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--order', required=True)
     parser.add_argument('--mcmc', default=False)
+    parser.add_argument('--volatility_period', default=10)
+    parser.add_argument('--end_date', default=False)
     args = parser.parse_args()
     args_dict = vars(args)
     #ostring = "BTO 1 INTC June 22.5 call at 1.20"
@@ -109,7 +108,8 @@ def main():
 
         print(df)
 
-        stdev = uf.get_stock_stdev(df)
+        stdev = uf.get_stock_stdev(df,\
+                                   period=int(args_dict['volatility_period']))
 
         print(stdev)
 
@@ -118,6 +118,9 @@ def main():
         if isinstance(expiration, str) == False:
             expiration = expiration[0]
         print(expiration)
+
+        if args_dict['end_date'] != False:
+            expiration = args_dict['end_date']
 
         start = datetime.date.today().isoformat()
         end = dtf.input_to_iso(expiration)
