@@ -20,7 +20,7 @@ def main():
 
     df = df.tail(days)
 
-    mpf.plot(df, type='candle')
+    mpf.plot(df, type='candle', volume=True)
 
 if __name__ == "__main__":
 
