@@ -10,6 +10,16 @@ import datetime
 
 
 def main():
+    '''
+    Make a profit & loss plot for an option order.
+
+    Example:
+    python pl_plot.py --order "sell 1 NVDA December 29 360.0 call at 10.03,
+     buy 1 NVDA December 29 370 call at 7.23"
+      --mcmc True --volatility_period 50 --end_date "June 15"
+
+    :return:
+    '''
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--order', required=True)
